@@ -52,8 +52,12 @@ body {
     box-shadow: 0 20px 60px var(--shadow-black-medium);
     width: 100%;
     max-width: 600px;
-    padding: 30px;
+    max-height: 90vh;
+    padding: 30px 10px 30px 30px;
     animation: fadeIn 0.5s ease-in;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 @keyframes fadeIn {
@@ -86,6 +90,7 @@ header h1 {
     display: flex;
     gap: 10px;
     margin-bottom: 30px;
+    margin-right: 15px;
 }
 
 #taskInput {
@@ -131,6 +136,35 @@ header h1 {
 
 .tasks-container {
     margin-bottom: 20px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1;
+    min-height: 0;
+    /* Smooth scrolling */
+    scroll-behavior: smooth;
+    /* Custom scrollbar styling for better UX */
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary-start) transparent;
+}
+
+/* Webkit scrollbar styling (Chrome, Safari, Edge) */
+.tasks-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.tasks-container::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+}
+
+.tasks-container::-webkit-scrollbar-thumb {
+    background: var(--color-primary-start);
+    border-radius: 10px;
+    transition: background 0.3s ease;
+}
+
+.tasks-container::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary-end);
 }
 
 .task-list {
@@ -138,6 +172,7 @@ header h1 {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    margin-right: 15px;
 }
 
 .task-item {
@@ -323,6 +358,7 @@ header h1 {
 @media (max-width: 768px) {
     .container {
         padding: 20px;
+        max-height: 85vh;
     }
     
     header h1 {
@@ -361,6 +397,7 @@ header h1 {
     .container {
         padding: 15px;
         border-radius: 15px;
+        max-height: 90vh;
     }
     
     header h1 {
