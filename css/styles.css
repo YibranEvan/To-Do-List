@@ -148,9 +148,10 @@ header h1 {
     display: flex;
     align-items: center;
     gap: 15px;
-    transition: all 0.3s ease;
+    transition: all 0.3s ease, padding-top 0.2s ease, padding-bottom 0.2s ease;
     cursor: move;
     animation: slideIn 0.3s ease;
+    position: relative;
 }
 
 @keyframes slideIn {
@@ -173,6 +174,52 @@ header h1 {
 .task-item.dragging {
     opacity: 0.5;
     transform: scale(0.95);
+    z-index: 1000;
+}
+
+/* Drop indicator line */
+.task-item.drop-above::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--color-primary-start);
+    border-radius: 2px;
+    box-shadow: 0 0 8px var(--shadow-primary-medium);
+    animation: dropLinePulse 0.8s ease-in-out infinite;
+}
+
+.task-item.drop-below::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--color-primary-start);
+    border-radius: 2px;
+    box-shadow: 0 0 8px var(--shadow-primary-medium);
+    animation: dropLinePulse 0.8s ease-in-out infinite;
+}
+
+@keyframes dropLinePulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+}
+
+/* Padding spacing when dragging over */
+.task-item.drop-above {
+    padding-top: 50px;
+}
+
+.task-item.drop-below {
+    padding-bottom: 50px;
 }
 
 .task-item.completed {
