@@ -28,7 +28,6 @@ function loadTasks() {
     if (storedTasks) {
         tasks = JSON.parse(storedTasks);
     }
-    console.log(tasks);
 }
 
 // Save tasks to localStorage
