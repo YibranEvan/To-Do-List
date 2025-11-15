@@ -61,8 +61,22 @@ function addTask() {
     };
     
     tasks.push(newTask);
+    
+    // Remove empty state if it exists
+    const emptyState = taskList.querySelector('.empty-state');
+    if (emptyState) {
+        emptyState.remove();
+    }
+    
+    // Add only the new task element
+    const taskItem = createTaskElement(newTask, tasks.length - 1);
+    taskList.appendChild(taskItem);
+    
+    // Setup drag and drop for the new item
+    DragAndDrop.setupDragAndDrop(tasks, saveTasks, updateTaskOrder);
+    
     saveTasks();
-    renderTasks();
+    updateTaskCount();
     taskInput.value = '';
     taskInput.focus();
 }
@@ -74,8 +88,20 @@ function deleteTask(id) {
     tasks.forEach((task, index) => {
         task.order = index;
     });
+    
+    // Remove only the specific element from DOM
+    const taskElement = document.querySelector(`[data-id="${id}"]`);
+    if (taskElement) {
+        taskElement.remove();
+    }
+    
+    // Check if list is empty
+    if (tasks.length === 0) {
+        taskList.innerHTML = '<li class="empty-state"><p>No tasks yet. Add one above!</p></li>';
+    }
+    
     saveTasks();
-    renderTasks();
+    updateTaskCount();
 }
 
 // Toggle task completion
@@ -83,8 +109,23 @@ function toggleComplete(id) {
     const task = tasks.find(t => t.id === id);
     if (task) {
         task.completed = !task.completed;
+        
+        // Update only the specific element
+        const taskElement = document.querySelector(`[data-id="${id}"]`);
+        if (taskElement) {
+            if (task.completed) {
+                taskElement.classList.add('completed');
+            } else {
+                taskElement.classList.remove('completed');
+            }
+            const checkbox = taskElement.querySelector('.task-checkbox');
+            if (checkbox) {
+                checkbox.checked = task.completed;
+            }
+        }
+        
         saveTasks();
-        renderTasks();
+        updateTaskCount();
     }
 }
 
@@ -117,8 +158,14 @@ function editTask(id) {
         }
         
         task.text = newText;
+        
+        // Update only the text element (input is already the .task-text element)
+        const newTextSpan = document.createElement('span');
+        newTextSpan.className = 'task-text';
+        newTextSpan.textContent = newText;
+        input.replaceWith(newTextSpan);
+        
         saveTasks();
-        renderTasks();
     };
     
     input.addEventListener('keypress', (e) => {
@@ -150,7 +197,35 @@ function renderTasks() {
     
     updateTaskCount();
     // Use DragAndDrop module (loaded via script tag)
-    DragAndDrop.setupDragAndDrop(tasks, saveTasks, renderTasks);
+    DragAndDrop.setupDragAndDrop(tasks, saveTasks, updateTaskOrder);
+}
+
+// Update task order in DOM without full re-render
+function updateTaskOrder() {
+    // Sort tasks by order
+    tasks.sort((a, b) => a.order - b.order);
+    
+    // Get all task elements
+    const taskElements = Array.from(taskList.querySelectorAll('.task-item'));
+    
+    // Sort elements to match task order
+    taskElements.sort((a, b) => {
+        const idA = parseInt(a.dataset.id);
+        const idB = parseInt(b.dataset.id);
+        const taskA = tasks.find(t => t.id === idA);
+        const taskB = tasks.find(t => t.id === idB);
+        return (taskA?.order || 0) - (taskB?.order || 0);
+    });
+    
+    // Re-append in correct order (only moves elements, doesn't recreate)
+    taskElements.forEach(element => {
+        taskList.appendChild(element);
+    });
+    
+    // Update dataset.index for all items
+    taskElements.forEach((element, index) => {
+        element.dataset.index = index;
+    });
 }
 
 // Create a task element
