@@ -173,15 +173,26 @@ function createTaskElement(task, index) {
     taskText.className = 'task-text';
     taskText.textContent = task.text;
     
-    // Edit button
+    // Edit button with icon
     const editBtn = document.createElement('button');
     editBtn.className = 'btn-edit';
-    editBtn.textContent = 'Edit';
+    editBtn.setAttribute('aria-label', 'Edit task');
+    const editIcon = document.createElement('img');
+    editIcon.src = 'icons/edit.svg';
+    editIcon.alt = 'Edit';
+    editIcon.className = 'btn-icon';
+    editBtn.appendChild(editIcon);
     editBtn.addEventListener('click', () => editTask(task.id));
     
+    // Delete button with icon
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'btn-delete';
-    deleteBtn.textContent = 'Delete';
+    deleteBtn.setAttribute('aria-label', 'Delete task');
+    const deleteIcon = document.createElement('img');
+    deleteIcon.src = 'icons/trash.svg';
+    deleteIcon.alt = 'Delete';
+    deleteIcon.className = 'btn-icon';
+    deleteBtn.appendChild(deleteIcon);
     deleteBtn.addEventListener('click', () => deleteTask(task.id));
     
     const actions = document.createElement('div');
@@ -199,4 +210,3 @@ function createTaskElement(task, index) {
 
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', init);
-
