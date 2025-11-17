@@ -64,17 +64,6 @@ body {
     overflow: hidden;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
 header {
     text-align: center;
     margin-bottom: 30px;
@@ -194,17 +183,6 @@ header h1 {
     position: relative;
 }
 
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
 .task-item:hover {
     border-color: var(--color-primary-start);
     box-shadow: 0 3px 10px var(--shadow-black-light);
@@ -242,15 +220,6 @@ header h1 {
     border-radius: 2px;
     box-shadow: 0 0 8px var(--shadow-primary-medium);
     animation: dropLinePulse 0.8s ease-in-out infinite;
-}
-
-@keyframes dropLinePulse {
-    0%, 100% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.6;
-    }
 }
 
 /* Padding spacing when dragging over */
@@ -390,6 +359,38 @@ header h1 {
     font-size: 1.1rem;
 }
 
+/*Animations*/
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes dropLinePulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .container {
@@ -450,4 +451,3 @@ header h1 {
         font-size: 0.95rem;
     }
 }
-

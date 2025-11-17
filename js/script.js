@@ -43,6 +43,15 @@ function updateTaskCount() {
     taskCount.textContent = `${completed} of ${total} tasks completed`;
 }
 
+// Show empty state
+function showEmptyState() {
+    taskList.innerHTML = `
+        <li class="empty-state">
+            <p>No tasks yet. Add one above!</p>
+        </li>
+    `;
+}
+
 // Create a new task
 function addTask() {
     const taskText = taskInput.value.trim();
@@ -75,7 +84,6 @@ function addTask() {
     DragAndDrop.setupDragAndDrop(tasks, saveTasks, updateTaskOrder);
     
     saveTasks();
-    updateTaskCount();
     taskInput.value = '';
     taskInput.focus();
 }
@@ -96,16 +104,15 @@ function deleteTask(id) {
     
     // Check if list is empty
     if (tasks.length === 0) {
-        taskList.innerHTML = '<li class="empty-state"><p>No tasks yet. Add one above!</p></li>';
+       showEmptyState();
     }
     
     saveTasks();
-    updateTaskCount();
 }
 
 // Toggle task completion
 function toggleComplete(id) {
-    const task = tasks.find(t => t.id === id);
+    const task = tasks.find(task => task.id === id);
     if (task) {
         task.completed = !task.completed;
         
@@ -124,13 +131,12 @@ function toggleComplete(id) {
         }
         
         saveTasks();
-        updateTaskCount();
     }
 }
 
 // Edit a task
 function editTask(id) {
-    const task = tasks.find(t => t.id === id);
+    const task = tasks.find(task => task.id === id);
     if (!task) return;
     
     const taskItem = document.querySelector(`[data-id="${id}"]`);
@@ -178,15 +184,14 @@ function editTask(id) {
 
 // Render all tasks
 function renderTasks() {
-    // Sort tasks by order
-    tasks.sort((a, b) => a.order - b.order);
-    
     if (tasks.length === 0) {
-        taskList.innerHTML = '<li class="empty-state"><p>No tasks yet. Add one above!</p></li>';
+        showEmptyState();
         updateTaskCount();
         return;
     }
-    
+
+    // Sort tasks by order
+    tasks.sort((a, b) => a.order - b.order);
     taskList.innerHTML = '';
     
     tasks.forEach((task, index) => {
@@ -246,31 +251,14 @@ function createTaskElement(task, index) {
     const taskText = document.createElement('span');
     taskText.className = 'task-text';
     taskText.textContent = task.text;
-    
-    // Edit button with icon
-    const editBtn = document.createElement('button');
-    editBtn.className = 'btn-edit';
-    editBtn.setAttribute('aria-label', 'Edit task');
-    const editIcon = document.createElement('img');
-    editIcon.src = 'icons/edit.svg';
-    editIcon.alt = 'Edit';
-    editIcon.className = 'btn-icon';
-    editBtn.appendChild(editIcon);
-    editBtn.addEventListener('click', () => editTask(task.id));
-    
-    // Delete button with icon
-    const deleteBtn = document.createElement('button');
-    deleteBtn.className = 'btn-delete';
-    deleteBtn.setAttribute('aria-label', 'Delete task');
-    const deleteIcon = document.createElement('img');
-    deleteIcon.src = 'icons/trash.svg';
-    deleteIcon.alt = 'Delete';
-    deleteIcon.className = 'btn-icon';
-    deleteBtn.appendChild(deleteIcon);
-    deleteBtn.addEventListener('click', () => deleteTask(task.id));
-    
+
+    // Actions
     const actions = document.createElement('div');
     actions.className = 'task-actions';
+
+    const editBtn = createIconButton('icons/edit.svg', 'Edit task', () => editTask(task.id));
+    const deleteBtn = createIconButton('icons/trash.svg', 'Delete task', () => deleteTask(task.id));
+    
     actions.appendChild(editBtn);
     actions.appendChild(deleteBtn);
     
@@ -279,6 +267,22 @@ function createTaskElement(task, index) {
     li.appendChild(actions);
     
     return li;
+}
+
+function createIconButton(icon, label, onClick) {
+    const btn = document.createElement('button');
+    btn.className = label.includes('Delete') ? 'btn-delete' : 'btn-edit';
+    btn.setAttribute('aria-label', label);
+
+    const img = document.createElement('img');
+    img.src = icon;
+    img.alt = label;
+    img.className = 'btn-icon';
+    
+    btn.appendChild(img);
+    btn.addEventListener('click', onClick);
+
+    return btn;
 }
 
 
