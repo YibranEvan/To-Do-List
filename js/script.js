@@ -22,7 +22,7 @@ function setupEventListeners() {
     });
 }
 
-// Load tasks from localStorage
+// Functions for loading and saving from localStorage
 function loadTasks() {
     const storedTasks = localStorage.getItem('tasks');
     if (storedTasks) {
@@ -30,20 +30,18 @@ function loadTasks() {
     }
 }
 
-// Save tasks to localStorage
 function saveTasks() {
     localStorage.setItem('tasks', JSON.stringify(tasks));
     updateTaskCount();
 }
 
-// Update task count display
+// Function for updating the task count display and Showing the empty state if there are no tasks
 function updateTaskCount() {
     const total = tasks.length;
     const completed = tasks.filter(task => task.completed).length;
     taskCount.textContent = `${completed} of ${total} tasks completed`;
 }
 
-// Show empty state
 function showEmptyState() {
     taskList.innerHTML = `
         <li class="empty-state">
@@ -52,7 +50,7 @@ function showEmptyState() {
     `;
 }
 
-// Create a new task
+// CRUD Functions for the tasks
 function addTask() {
     const taskText = taskInput.value.trim();
     
@@ -88,7 +86,6 @@ function addTask() {
     taskInput.focus();
 }
 
-// Delete a task
 function deleteTask(id) {
     tasks = tasks.filter(task => task.id !== id);
     // Reorder remaining tasks
@@ -110,31 +107,6 @@ function deleteTask(id) {
     saveTasks();
 }
 
-// Toggle task completion
-function toggleComplete(id) {
-    const task = tasks.find(task => task.id === id);
-    if (task) {
-        task.completed = !task.completed;
-        
-        // Update only the specific element
-        const taskElement = document.querySelector(`[data-id="${id}"]`);
-        if (taskElement) {
-            if (task.completed) {
-                taskElement.classList.add('completed');
-            } else {
-                taskElement.classList.remove('completed');
-            }
-            const checkbox = taskElement.querySelector('.task-checkbox');
-            if (checkbox) {
-                checkbox.checked = task.completed;
-            }
-        }
-        
-        saveTasks();
-    }
-}
-
-// Edit a task
 function editTask(id) {
     const task = tasks.find(task => task.id === id);
     if (!task) return;
@@ -181,29 +153,6 @@ function editTask(id) {
     
     input.addEventListener('blur', saveEdit);
 }
-
-// Render all tasks
-function renderTasks() {
-    if (tasks.length === 0) {
-        showEmptyState();
-        updateTaskCount();
-        return;
-    }
-
-    // Sort tasks by order
-    tasks.sort((a, b) => a.order - b.order);
-    taskList.innerHTML = '';
-    
-    tasks.forEach((task, index) => {
-        const taskItem = createTaskElement(task, index);
-        taskList.appendChild(taskItem);
-    });
-    
-    updateTaskCount();
-    // Use DragAndDrop module (loaded via script tag)
-    DragAndDrop.setupDragAndDrop(tasks, saveTasks, updateTaskOrder);
-}
-
 // Update task order in DOM without full re-render
 function updateTaskOrder() {
     // Sort tasks by order
@@ -230,6 +179,53 @@ function updateTaskOrder() {
     taskElements.forEach((element, index) => {
         element.dataset.index = index;
     });
+}
+
+// Toggle the completion of a task
+function toggleComplete(id) {
+    const task = tasks.find(task => task.id === id);
+    if (task) {
+        task.completed = !task.completed;
+        
+        // Update only the specific element
+        const taskElement = document.querySelector(`[data-id="${id}"]`);
+        if (taskElement) {
+            if (task.completed) {
+                taskElement.classList.add('completed');
+            } else {
+                taskElement.classList.remove('completed');
+            }
+            const checkbox = taskElement.querySelector('.task-checkbox');
+            if (checkbox) {
+                checkbox.checked = task.completed;
+            }
+        }
+        
+        saveTasks();
+    }
+}
+
+
+// Render all tasks
+function renderTasks() {
+    if (tasks.length === 0) {
+        showEmptyState();
+        updateTaskCount();
+        return;
+    }
+
+    // Sort tasks by order
+    tasks.sort((a, b) => a.order - b.order);
+    taskList.innerHTML = '';
+    
+    tasks.forEach((task, index) => {
+        const taskItem = createTaskElement(task, index);
+        taskList.appendChild(taskItem);
+    });
+    
+    updateTaskCount();
+    // Use DragAndDrop module (loaded via script tag)
+    DragAndDrop.setupDragAndDrop(tasks, saveTasks, updateTaskOrder);
 }
 
 // Create a task element
@@ -284,7 +280,6 @@ function createIconButton(icon, label, onClick) {
 
     return btn;
 }
-
 
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', init);
